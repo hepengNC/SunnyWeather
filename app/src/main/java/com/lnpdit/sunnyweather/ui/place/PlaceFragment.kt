@@ -1,5 +1,6 @@
 package com.lnpdit.sunnyweather.ui.place
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lnpdit.sunnyweather.databinding.FragmentPlaceBinding
 import com.lnpdit.sunnyweather.logic.model.PlaceResponse
+import com.lnpdit.sunnyweather.ui.weather.WeatherActivity
 
 /**
  * Created by HePeng on 2023/7/11
@@ -33,8 +35,19 @@ class PlaceFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        if (viewModel.isSavePlace()) {
+            val place = viewModel.getPlace()
+            val intent = Intent(requireContext(), WeatherActivity::class.java).apply {
+                putExtra("lng", place.location.lng.toString())
+                putExtra("lat", place.location.lat.toString())
+                putExtra("placeName", place.formatted_address)
+            }
+            startActivity(intent)
+            requireActivity().finish()
+            return
+        }
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = PlaceAdapter(viewModel.placeList)
+        adapter = PlaceAdapter(this, viewModel.placeList)
         binding.recyclerView.adapter = adapter
         binding.etPlace.addTextChangedListener {
             val content = it.toString()

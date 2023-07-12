@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.lnpdit.sunnyweather.logic.Repository
+import com.lnpdit.sunnyweather.logic.dao.PlaceDao
 import com.lnpdit.sunnyweather.logic.model.PlaceResponse
 
 /**
@@ -19,4 +20,8 @@ class PlaceViewModel : ViewModel() {
     fun searchPlaces(query: String) {
         searchLiveData.value = query
     }
+
+    fun savePlace(place: PlaceResponse.Place) = PlaceDao.savePlace(place)
+    fun getPlace() = PlaceDao.getPlace()
+    fun isSavePlace() = PlaceDao.isSavePlace()
 }
