@@ -12,6 +12,7 @@ import com.lnpdit.sunnyweather.ui.weather.WeatherActivity
 /**
  * Created by HePeng on 2023/7/11
  */
+
 class PlaceAdapter(val fragment: PlaceFragment, val placeList: List<PlaceResponse.Place>) :
     RecyclerView.Adapter<PlaceAdapter.ViewHolder>() {
     inner class ViewHolder(binding: PlaceItemBinding) : RecyclerView.ViewHolder(binding.root) {
