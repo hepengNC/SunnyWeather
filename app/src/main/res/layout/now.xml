@@ -5,10 +5,18 @@
     android:orientation="vertical">
 
     <FrameLayout
-        android:fitsSystemWindows="true"
         android:id="@+id/titleLayout"
         android:layout_width="match_parent"
-        android:layout_height="70dp">
+        android:layout_height="70dp"
+        android:fitsSystemWindows="true">
+
+        <ImageView
+            android:id="@+id/ivNav"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="20dp"
+            android:background="@drawable/nav" />
 
         <TextView
             android:id="@+id/placeName"

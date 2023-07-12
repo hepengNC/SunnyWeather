@@ -1,14 +1,18 @@
 package com.lnpdit.sunnyweather.ui.weather
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import com.lnpdit.sunnyweather.R
 import com.lnpdit.sunnyweather.databinding.ActivityWeatherBinding
@@ -21,12 +25,13 @@ import java.util.*
  * Created by HePeng on 2023/7/12
  */
 class WeatherActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityWeatherBinding
+    lateinit var binding: ActivityWeatherBinding
     val viewModel by lazy { ViewModelProvider(this).get(WeatherViewModel::class.java) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val decorView = window.decorView
-        decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        decorView.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         window.statusBarColor = Color.TRANSPARENT
         binding = ActivityWeatherBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -46,8 +51,38 @@ class WeatherActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "暂无天气数据", Toast.LENGTH_SHORT).show()
             }
+            binding.refreshLayout.isRefreshing = false
         }
+        binding.refreshLayout.setColorSchemeColors(getColor(R.color.purple_500))
+        binding.refreshLayout.setOnRefreshListener {
+            refreshWeather()
+        }
+        refreshWeather()
+
+        binding.now.ivNav.setOnClickListener {
+            binding.drawerLayout.openDrawer(GravityCompat.START)
+        }
+        binding.drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+                val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(drawerView.windowToken,InputMethodManager.HIDE_NOT_ALWAYS)
+            }
+
+            override fun onDrawerStateChanged(newState: Int) {
+            }
+
+        })
+    }
+
+    fun refreshWeather() {
         viewModel.refreshWeather(viewModel.lng, viewModel.lat)
+        binding.refreshLayout.isRefreshing = false
     }
 
     private fun refreshWeather(weather: Weather) {
@@ -68,7 +103,7 @@ class WeatherActivity : AppCompatActivity() {
             val skyIcon: ImageView = view.findViewById(R.id.skyIcon)
             val skyInfo: TextView = view.findViewById(R.id.skyInfo)
             val temperatureInfo: TextView = view.findViewById(R.id.temperatureInfo)
-            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd",Locale.getDefault())
+            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             dateinfo.text = simpleDateFormat.format(simpleDateFormat.parse(skycon.date))
             skyIcon.setImageResource(getSky(skycon.value).icon)
             skyInfo.text = getSky(skycon.value).info
